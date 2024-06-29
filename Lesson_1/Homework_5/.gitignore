@@ -1,0 +1,264 @@
+# Создано https://www.toptal.com/developers/gitignore/api/python,pycharm+all
+# Редактировать на https://www.toptal.com/developers/gitignore?templates=python,pycharm+all
+
+### PyCharm+все ###
+# Охватывает IDE JetBrains: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm и Rider.
+# Ссылка: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839.
+
+# Специфические для пользователя вещи
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/словари
+.idea/**/полка
+
+# AWS Для конкретного пользователя
+.idea/**/aws.xml
+
+# Сгенерированные файлы
+.idea/**/contentModel.xml
+
+# Конфиденциальные или часто обновляемые файлы.
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.идея/**/динамический.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+
+# Градл
+.idea/**/gradle.xml
+.idea/**/библиотеки
+
+# Gradle и Maven с автоматическим импортом
+# При использовании Gradle или Maven с автоматическим импортом следует исключить файлы модулей,
+# поскольку они будут созданы заново, и могут вызвать отток. Раскомментируйте, если используете
+# автоматический импорт.
+# .идея/артефакты
+# .idea/компилятор.xml
+# .idea/jarRepositories.xml
+# .idea/modules.xml
+# .idea/*.iml
+# .идея/модули
+# *.iml
+# *.ipr
+
+# CMake
+cmake-build-*/
+
+# Плагин Mongo Explorer
+.idea/**/mongoSettings.xml
+
+# Файловый формат проекта
+*.iws
+
+# IntelliJ
+вне/
+
+# плагин mpeltonen/sbt-idea
+.idea_modules/
+
+# Плагин JIRA
+atlassian-ide-plugin.xml
+
+# Плагин Cursive Clojure
+.idea/replstate.xml
+
+# Плагин SonarLint
+.idea/sonarlint/
+
+# Плагин Crashlytics (для Android Studio и IntelliJ)
+com_crashlytics_export_strings.xml
+crashlytics.properties
+крашlytics-build.properties
+ткань.свойства
+
+# Rest Client на основе редактора
+.idea/httpRequests
+
+# Сериализованный файл кэша Android Studio 3.1+
+.idea/caches/build_file_checksums.ser
+
+### PyCharm+все патчи ###
+# Игнорировать все, кроме настроек стиля кода и запускать конфигурации
+# которые должны совместно использоваться внутри команд.
+
+.идея/*
+
+!.idea/codeStyles
+!.idea/runКонфигурации
+
+### Питон ###
+# Байт-компилированные/оптимизированные/DLL-файлы
+__pycache__/
+*.py[код]
+*$py.класс
+
+# Расширения C
+*.так
+
+# Распространение/упаковка
+.Python
+строить/
+развивающие яйца/
+расст./
+загрузки/
+яйца/
+.яйца/
+lib/
+lib64/
+части/
+сдист/
+вар/
+колеса/
+поделиться/python-wheels/
+*.egg-info/
+.installed.cfg
+*.яйцо
+МАНИФЕСТ
+
+# PyInstaller
+# Обычно эти файлы пишутся скриптом Python из шаблона
+# перед тем, как PyInstaller соберет exe-файл, чтобы добавить в него дату/другую информацию.
+*.манифест
+*.спецификация
+
+# Журналы установщика
+пип-log.txt
+pip-delete-this-directory.txt
+
+# Отчеты о модульном тестировании/покрытии
+htmlcov/
+.tox/
+.nox/
+.покрытие
+.покрытие.*
+.cache
+ностестс.xml
+покрытие.xml
+*.крышка
+*.py,обложка
+.гипотеза/
+.pytest_cache/
+крышка/
+
+# Переводы
+*.мо
+*.горшок
+
+# Что-то из Джанго:
+*.бревно
+local_settings.py
+БД.sqlite3
+db.sqlite3-журнал
+
+# Материал колбы:
+пример/
+.webassets-кэш
+
+# Скрапбукинг:
+.скрапи
+
+# Документация по Сфинксу
+документы/_build/
+
+# Пибилдер
+.pybuilder/
+цель/
+
+# Блокнот Jupyter
+.ipynb_checkpoints
+
+# IPython
+профиль_по умолчанию/
+ipython_config.py
+
+# pyenv
+# Для библиотеки или пакета вы можете игнорировать эти файлы, поскольку код
+# предназначены для работы в нескольких средах; в противном случае проверьте их в:
+# .python-версия
+
+# pipenv
+# Согласно pypa/pipenv#598, рекомендуется включить Pipfile.lock в систему контроля версий.
+# Однако в случае совместной работы, если имеются платформенно-специфичные зависимости или зависимости
+# не имея кросс-платформенной поддержки, Pipenv может устанавливать зависимости, которые не работают или не работают
+# установить все необходимые зависимости.
+#Pipfile.lock
+
+# поэзия
+# Как и в случае с Pipfile.lock, обычно рекомендуется включать поэтику.lock в систему контроля версий.
+# Это особенно рекомендуется для двоичных пакетов, чтобы обеспечить воспроизводимость и более того.
+# обычно игнорируется для библиотек.
+# https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
+#поэзия.замок
+
+# пдм
+# Как и в случае с Pipfile.lock, обычно рекомендуется включать pdm.lock в систему контроля версий.
+#pdm.lock
+# pdm хранит конфигурации всего проекта в .pdm.toml, но его не рекомендуется включать
+# в системе контроля версий.
+# https://pdm.fming.dev/#use-with-ide
+.pdm.toml
+
+№ ПКП 582; используется, например, github.com/David-OConnor/pyflow и github.com/pdm-project/pdm
+__pypackages__/
+
+# Сельдерей
+celerybeat-расписание
+celerybeat.пид
+
+# файлы, обработанные SageMath
+*.sage.py
+
+# Окружающая среда
+.env
+.венв
+окр./
+венв/
+ОКРУЖАЮЩАЯ СРЕДА/
+env.bak/
+venv.bak/
+
+# Настройки проекта Spyder
+.spyderproject
+.spyproject
+
+# Настройки проекта веревки
+.ropeproject
+
+# mkdocs документация
+/сайт
+
+# мойпи
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Проверка типа костра
+.pyre/
+
+# анализатор статических типов pytype
+.pytype/
+
+# Символы отладки Cython
+cython_debug/
+
+# Пичарм
+# Специальный шаблон JetBrains хранится в отдельном файле JetBrains.gitignore, который может
+# можно найти по адресу https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
+# и может быть добавлен в глобальный gitignore или объединен с этим файлом. Для более ядерного
+# вариант (не рекомендуется) вы можете раскомментировать следующее, чтобы игнорировать всю папку idea.
+#.идея/
+
+### Патч Python ###
+# Локальный файл конфигурации Poetry - https://python-poetry.org/docs/configuration/#local-configuration
+поэзия.toml
+
+# ерш
+.ruff_cache/
+
+# Файлы конфигурации LSP
+pirightconfig.json
+
+# Конец https://www.toptal.com/developers/gitignore/api/python,pycharm+al
