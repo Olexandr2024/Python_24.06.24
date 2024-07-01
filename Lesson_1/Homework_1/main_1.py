@@ -33,8 +33,11 @@ print(f"{x} - {y} = {x - y}")
 print(f"{x} * {y} = {x * y}")
 print(f"{x} / {y} = {x / y}")
 print(f"{x} // {y} = {x // y}")
+print(f"{x} % {y} = {x % y}")
+
 
 # Task 4
+
 import math
 
 radius = float(input("Введите радиус окружности: "))
@@ -64,7 +67,7 @@ for n in years:
     print(f"Через {n} років ви матимете: ${a:.2f}")
 
 
-# Task 5
+# Task 6
 
 # Запит обмінного курсу від користувача
 exchange_rate = float(input("Введіть поточний обмінний курс долара до гривні: "))
@@ -78,7 +81,7 @@ amount_uah = amount_usd * exchange_rate
 # Виведення результату
 print(f"{amount_usd} доларів = {amount_uah:.2f} гривень за обмінним курсом {exchange_rate}")
 
-# Task 5
+# Task 7
 
 # Запит від користувача для введення тризначного числа
 number = int(input("Введіть тризначне ціле число: "))
