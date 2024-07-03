@@ -34,23 +34,23 @@ else:
 number = int(input("Введіть ціле число "))
 
 # Перевірка, чи дорівнює нулю
-if number == 0:
-    print(f"Число {number} равно нулю 0")
-
+if number:
+    print(f"Число {number} не дорівнює нулю")
 else:
-    print(f"Число {number} не равно нулю 0")
+    print(f"Число {number} дорівнює нулю")
+
 
 # Task 4
 
 # Запрос значення у користувача
-number = int(input("Введіть ціле число "))
+number = int(input("Введіть ціле число: "))
 
 # Перевірка, чи є число парним чи непарним
-if number % 2 == 0:
-    print("Число парне")
+result = "Число непарне" if number % 2 else "Число парне"
 
-else:
-    print("Число непарне")
+# Вывод результата
+print(result)
+
 
 # Task 5
 
