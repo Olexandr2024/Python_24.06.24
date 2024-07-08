@@ -100,7 +100,7 @@ try:
     # Determine the corresponding weight status message based on BMI
     if bmi < 18.5:
         print(f"Your BMI is {bmi:.1f}. You are underweight.")
-    elif bmi >= 18.5 and bmi < 25:
+    elif bmi <= 18.5 and bmi < 25:
         print(f"Your BMI is {bmi:.1f}. You have a normal weight.")
     elif bmi >= 25 and bmi < 30:
         print(f"Your BMI is {bmi:.1f}. You are overweight.")
