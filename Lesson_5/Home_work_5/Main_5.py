@@ -1,8 +1,7 @@
 # Task_1
 def main():
-    for number in range(1, 101):
-        if number % 7 == 0:
-            print(number)
+    for number in range(7, 101, 7):
+        print(number)
 
 if __name__ == "__main__":
     main()
@@ -13,7 +12,7 @@ def main():
     count = 0
 
     for number in range(1, 100):
-        if number % 2 != 0:  # Check if the number is odd
+        if number % 2:  # Check if the number is odd
             summa += number
             count += 1
 
@@ -50,7 +49,7 @@ def main():
 
     factorial = 1
 
-    for i in range(1, n + 1):
+    for i in range(2, n + 1):
         factorial *= i
 
     print(f"The factorial of {n} is {factorial}")
@@ -147,19 +146,14 @@ print(f"Reversed list: {reversed_list}")
 
 # Task_12
 
-
 for num in range(2, 101):
-
-
 
     for i in range(2, int(num ** 0.5) + 1):
         if num % i == 0:
-            is_prime = False
             break
-
-
-    if is_prime:
+    else:
         print(num)
+
 
 
 # Task_13
@@ -187,6 +181,7 @@ try:
     print_sandglass(width)
 except ValueError as e:
     print(e)
+
 
 
 
