@@ -28,4 +28,4 @@ html_text = '''
 
 cleaned_text = clean_html_tags(html_text)
 print("Cleared text:")
-print(cleaned_text)
+
