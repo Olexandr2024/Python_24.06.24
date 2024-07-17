@@ -9,8 +9,10 @@ print(f"The number of 'b' in the string is: {count_b}")
 
 name = input('Enter a name: ')
 
-if name.istitle() and name.isalpha():
-    print(f"The name 'name' is valid")
+words = name.split()
+
+if all(word.istitle() and word.isalpha() for word in words):
+    print(f"The name '{name}' is valid")
 else:
     print(f"The name '{name}' is not valid")
 
@@ -26,10 +28,9 @@ print(f"The sum of all character codes in the string is: {total_sum}")
 
 import math
 
-pi = math.pi
-
 for i in range(2, 12):
-    print(f"{pi:.{i}f}")
+    print(f"{math.pi:.{i}f}")
+
 
 # Task_5
 
@@ -37,7 +38,7 @@ text = input("Enter text: ")
 
 words = text.split()
 
-longest_word = max (words, key=len)
+longest_word = max(words, key=len)
 
 print(f"Lost word: {longest_word}")
 
@@ -55,18 +56,34 @@ for word_length in range(1, len(text) // 2 + 1):
 print(f"Vovochka writing the word - '{shortest_word}'")
 
 # Task_7
-
-import re
-
 def clean_html_tags(text):
-    clean = re.compile(r'<.*?>|</.*?>')
-    return re.sub(clean, '', text)
+    in_tag = 0
+    result = ''
+    i = 0
 
-# Usage example
+    while i < len(text):
+        if text[i] == '<':
+            in_tag += 1
+        elif text[i] == '>':
+            in_tag -= 1
+        elif in_tag == 0:
+            result += text[i]
+        i += 1
+
+    while '<' in result:
+        start = result.find('<')
+        end = result.find('>')
+        if start != -1 and end != -1:
+            result = result[:start] + result[end + 1:]
+
+    return result
+
+
+# Example usage
 html_text = '''
 <div id="rcnt" style="clear:both;position:relative;zoom:1">
 '''
 
 cleaned_text = clean_html_tags(html_text)
-print("Cleansing text: ")
+print("Cleared text:")
 print(cleaned_text)
