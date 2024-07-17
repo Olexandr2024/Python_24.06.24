@@ -29,3 +29,11 @@ html_text = '''
 cleaned_text = clean_html_tags(html_text)
 print("Cleared text:")
 
+
+words = name.split()
+
+
+if all(word.istitle() and word.isalpha() for word in words):
+    print(f"The name '{name}' is valid")
+else:
+    print(f"The name '{name}' is not valid")

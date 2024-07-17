@@ -7,14 +7,11 @@ print(f"The number of 'b' in the string is: {count_b}")
 
 # Task_2
 
-name = input('Enter a name: ')
+name = input('Enter your name: ')
 
-words = name.split()
+res = 'Valid' if name.istitle() and  name. replace('', '').isalpha() else "Invalid name"
 
-if all(word.istitle() and word.isalpha() for word in words):
-    print(f"The name '{name}' is valid")
-else:
-    print(f"The name '{name}' is not valid")
+
 
 # Task_3
 
