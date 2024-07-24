@@ -1,20 +1,19 @@
-def mutual_friends(user1, user2, friendships):
-    if user1 not in friendships or user2 not in friendships:
-        return set()  # Return an empty set if either user is not in the dictionary
-    return friendships[user1] & friendships[user2]
+def count_unique_elements(lst):
+    # Создаем словарь для хранения частоты каждого элемента
+    frequency = {}
+    for item in lst:
+        if item in frequency:
+            frequency[item] += 1
+        else:
+            frequency[item] = 1
 
-# Example friendships data
-friendships = {
-    "user1": {"user2", "user3", "user4"},
-    "user2": {"user1", "user3"},
-    "user3": {"user1", "user2", "user4"},
-    "user4": {"user1", "user3"}
-}
+    # Подсчитываем количество элементов, которые встречаются только один раз
+    unique_count = sum(1 for item in frequency if frequency[item] == 1)
+    return unique_count
 
-# Get user input
-user1 = input("Enter the first user: ")
-user2 = input("Enter the second user: ")
+# Пример списка
+lst = [1, 2, 2, 3, 4, 5, 5, 5, 6]
 
-# Calculate and print mutual friends
-mutual = mutual_friends(user1, user2, friendships)
-print(f"Mutual friends between {user1} and {user2}: {mutual}")
+# Подсчет уникальных элементов
+unique_count = count_unique_elements(lst)
+print(f"The number of unique elements in the list: {unique_count}")
