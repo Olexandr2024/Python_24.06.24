@@ -1,34 +1,21 @@
-from collections import defaultdict
-expenses = [
-    '1 Bob Simson 19.58$ decorations',
-    '2 Mary 66.7$ food',
-    '3 Mary 98.91$ toys',
-    '4 Aleksa 72.29$ drinks',
-    '5 Maria Simson 84.48$ food',
-    '6 Aleksa 100.41$ accessories',
-    '7 Mary 19.9$ accessories',
-    '8 Bob Simson 83.88$ drinks',
-    '9 Bob Simson 58.21$ instruments',
-    '10 Maria Simson 20.61$ accessories'
-]
+def number_to_words(n):
+    to_19 = 'zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen'.split()
+    tens = 'twenty thirty forty fifty sixty seventy eighty ninety'.split()
 
-def expenses_by_categories(expenses):
-    category_totals = defaultdict(float)
-    for entry in expenses:
-        parts = entry.split()
-        category_totals[parts[-1]] += float(parts[-2].replace('$', ''))
-    return {category: round(total, 2) for category, total in category_totals.items()}
+    def get_words(num):
+        if num < 20:
+            return to_19[num]
+        elif num < 100:
+            return tens[num // 10 - 2] + ('' if num % 10 == 0 else ' ' + to_19[num % 10])
+        else:
+            return to_19[num // 100] + ' hundred' + (' ' + get_words(num % 100) if num % 100 else '')
 
-def expenses_by_users(expenses):
-    user_totals = defaultdict(float)
-    for entry in expenses:
-        parts = entry.split()
-        user_totals[' '.join(parts[1:-2])] += float(parts[-2].replace('$', ''))
-    return {user: round(total, 2) for user, total in user_totals.items()}
+    return get_words(int(n))
 
+def dollars_and_cents_to_words(amount):
+    dollars, cents = amount.split(',')
+    return f"{number_to_words(dollars)} dollars and {number_to_words(cents)} cents"
 
-categories_totals = expenses_by_categories(expenses)
-users_totals = expenses_by_users(expenses)
-
-print("Expenses by category:", categories_totals)
-print("Costs by user:", users_totals)
+# Пример использования
+amount = input("Enter the amount in the format dollars,cents (e.g.,): ")
+print(dollars_and_cents_to_words(amount))
