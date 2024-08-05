@@ -45,19 +45,19 @@ def person_expenses(data, person):
 filename = 'hw_10_test.txt'
 data = load_data(filename)
 
-# Total expenses for each category
+
 category_totals = total_expenses_by_category(data)
 print("Total expenses for each product category:")
 for category, total in category_totals.items():
     print(f"{category}: {total:.2f}$")
 
-# Amount spent by each family member
+
 person_totals = total_expenses_by_person(data)
 print("\nHow much money did each family member spend")
 for person, total in person_totals.items():
     print(f"{person}: {total:.2f}$")
 
-# Enter the name of a family member for a detailed report
+
 person = input("\nEnter a family member's name to get a detailed report: ").strip()
 purchases, total_amount = person_expenses(data, person)
 print(f"\nFamily member {person} did {purchases} total purchases {total_amount:.2f}$")
