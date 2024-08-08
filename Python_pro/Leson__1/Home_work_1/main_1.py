@@ -322,22 +322,68 @@ class BankTransferProcessor(PaymentProcessor):
 
 # Example usage
 
+# Example usage
+
 # Create several products
+"""
+Creates instances of the Product class for each item.
+
+Args:
+    product1: An instance of Product representing a laptop.
+    product2: An instance of Product representing a smartphone.
+    product3: An instance of Product representing headphones.
+
+Returns:
+    None
+"""
 product1 = Product("Laptop", 1200.99, "A high-performance laptop")
 product2 = Product("Smartphone", 699.99, "A latest model smartphone")
 product3 = Product("Headphones", 199.99, "Noise-cancelling headphones")
 
 # Create a cart and add products to it
+"""
+Initializes a Cart object and adds products to it with specified quantities.
+
+Args:
+    cart: An instance of Cart to which products are added.
+    product1: The product representing a laptop is added with quantity 1.
+    product2: The product representing a smartphone is added with quantity 2.
+    product3: The product representing headphones is added with quantity 3.
+
+Returns:
+    None
+"""
 cart = Cart()
 cart.add_product(product1, 1)
 cart.add_product(product2, 2)
 cart.add_product(product3, 3)
 
 # Display cart contents before applying any discounts
+"""
+Prints the contents of the cart and the total cost before any discounts are applied.
+
+Args:
+    cart: The Cart instance whose contents are displayed.
+
+Returns:
+    None
+"""
 print("Before applying discount:")
 print(cart)
 
 # Apply discount based on user choice
+"""
+Prompts the user to choose a discount type (percentage or fixed) and applies it to the cart.
+
+Args:
+    discount_choice: A string input from the user indicating the discount type.
+    percentage: A float representing the percentage discount, if chosen.
+    amount: A float representing the fixed amount discount, if chosen.
+    discount: An instance of Discount (either PercentageDiscount or FixedAmountDiscount).
+
+Returns:
+    None
+"""
 discount_choice = input("Choose discount type (percentage/fixed): ").strip().lower()
 if discount_choice == "percentage":
     percentage = float(input("Enter discount percentage: "))
@@ -353,10 +399,29 @@ if discount:
     cart.apply_discount(discount)
 
 # Display cart contents after applying the discount
+"""
+Prints the contents of the cart and the total cost after the discount has been applied.
+
+Args:
+    cart: The Cart instance whose contents are displayed after the discount.
+
+Returns:
+    None
+"""
 print("After applying discount:")
 print(cart)
 
 # Payment process
+"""
+Prompts the user to choose a payment method and processes the payment.
+
+Args:
+    choice: A string input from the user indicating the chosen payment method.
+    processor: An instance of PaymentProcessor (either CreditCardProcessor, PayPalProcessor, or BankTransferProcessor).
+
+Returns:
+    None
+"""
 print("Choose payment method:")
 print("1. Credit Card")
 print("2. PayPal")
@@ -382,5 +447,14 @@ else:
     processor = None
 
 # Execute payment if a valid processor was selected
+"""
+Executes the payment using the selected payment processor.
+
+Args:
+    processor: The PaymentProcessor instance used to process the payment.
+
+Returns:
+    None
+"""
 if processor:
     cart.pay(processor)
