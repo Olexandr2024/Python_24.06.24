@@ -385,18 +385,34 @@ Returns:
     None
 """
 discount_choice = input("Choose discount type (percentage/fixed): ").strip().lower()
-if discount_choice == "percentage":
-    percentage = float(input("Enter discount percentage: "))
-    discount = PercentageDiscount(percentage)
-elif discount_choice == "fixed":
-    amount = float(input("Enter discount amount: "))
-    discount = FixedAmountDiscount(amount)
+
+if discount_choice in ["percentage", "fixed"]:
+    if discount_choice == "percentage":
+        percentage = float(input("Enter discount percentage: "))
+        if percentage > 100:
+            print("Discount percentage cannot exceed 100%. No discount applied.")
+            discount = None
+        else:
+            discount = PercentageDiscount(percentage)
+    elif discount_choice == "fixed":
+        amount = float(input("Enter discount amount: "))
+        discount = FixedAmountDiscount(amount)
 else:
-    discount = None
-    print("No discount applied.")
+    try:
+        # Try to interpret the input as a percentage
+        percentage = float(discount_choice)
+        if percentage > 100:
+            print("Discount percentage cannot exceed 100%. No discount applied.")
+            discount = None
+        else:
+            discount = PercentageDiscount(percentage)
+    except ValueError:
+        discount = None
+        print("No discount applied.")
 
 if discount:
     cart.apply_discount(discount)
+
 
 # Display cart contents after applying the discount
 """
@@ -427,18 +443,18 @@ print("1. Credit Card")
 print("2. PayPal")
 print("3. Bank Transfer")
 
-choice = input("Enter the number of the payment method: ").strip()
+choice = input("Enter the number or name of the payment method: ").strip().lower()
 
-if choice == '1':
+if choice in ['1', 'credit card']:
     card_number = input("Enter card number: ").strip()
     card_holder = input("Enter card holder name: ").strip()
     expiration_date = input("Enter expiration date (MM/YY): ").strip()
     cvv = input("Enter CVV: ").strip()
     processor = CreditCardProcessor(card_number, card_holder, expiration_date, cvv)
-elif choice == '2':
+elif choice in ['2', 'paypal']:
     email = input("Enter PayPal email: ").strip()
     processor = PayPalProcessor(email)
-elif choice == '3':
+elif choice in ['3', 'bank transfer']:
     bank_account = input("Enter bank account number: ").strip()
     bank_name = input("Enter bank name: ").strip()
     processor = BankTransferProcessor(bank_account, bank_name)
@@ -458,3 +474,4 @@ Returns:
 """
 if processor:
     cart.pay(processor)
+
