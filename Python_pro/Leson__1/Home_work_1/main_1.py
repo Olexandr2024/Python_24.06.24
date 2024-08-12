@@ -322,8 +322,6 @@ class BankTransferProcessor(PaymentProcessor):
 
 # Example usage
 
-# Example usage
-
 # Create several products
 """
 Creates instances of the Product class for each item.
