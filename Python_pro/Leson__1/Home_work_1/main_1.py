@@ -1,3 +1,31 @@
+class InvalidPriceError(Exception):
+    """
+    Custom exception raised when an invalid price (negative or zero) is set for a product.
+    """
+    def __init__(self, price):
+        """
+        Initializes the InvalidPriceError with a specific price.
+
+        Args:
+            price: The invalid price that triggered the exception.
+        """
+        super().__init__(f"Invalid price: {price}. Price must be greater than 0.")
+
+
+class InvalidQuantityError(Exception):
+    """
+    Custom exception raised when an invalid quantity (negative or zero) is added to the cart.
+    """
+    def __init__(self, quantity):
+        """
+        Initializes the InvalidQuantityError with a specific quantity.
+
+        Args:
+            quantity: The invalid quantity that triggered the exception.
+        """
+        super().__init__(f"Invalid quantity: {quantity}. Quantity must be greater than 0.")
+
+
 class Product:
     """
     Represents a product in the store.
@@ -16,7 +44,12 @@ class Product:
             name: The name of the product.
             price: The price of the product.
             description: The description of the product.
+
+        Raises:
+            InvalidPriceError: If the price is negative or zero.
         """
+        if price <= 0:
+            raise InvalidPriceError(price)
         self.name = name
         self.price = price
         self.description = description
@@ -155,7 +188,12 @@ class Cart(DiscountMixin):
         Args:
             product: An instance of Product to add to the cart.
             quantity: The quantity of the product to add.
+
+        Raises:
+            InvalidQuantityError: If the quantity is negative or zero.
         """
+        if quantity <= 0:
+            raise InvalidQuantityError(quantity)
         self.items.append((product, quantity))
 
     def total_cost(self):
@@ -322,154 +360,156 @@ class BankTransferProcessor(PaymentProcessor):
 
 # Example usage
 
-# Create several products
-"""
-Creates instances of the Product class for each item.
+try:
+    # Create several products
+    """
+    Creates instances of the Product class for each item.
 
-Args:
-    product1: An instance of Product representing a laptop.
-    product2: An instance of Product representing a smartphone.
-    product3: An instance of Product representing headphones.
+    Args:
+        product1: An instance of Product representing a laptop.
+        product2: An instance of Product representing a smartphone.
+        product3: An instance of Product representing headphones.
 
-Returns:
-    None
-"""
-product1 = Product("Laptop", 1200.99, "A high-performance laptop")
-product2 = Product("Smartphone", 699.99, "A latest model smartphone")
-product3 = Product("Headphones", 199.99, "Noise-cancelling headphones")
+    Returns:
+        None
+    """
+    product1 = Product("Laptop", 1200.99, "A high-performance laptop")
+    product2 = Product("Smartphone", 699.99, "A latest model smartphone")
+    product3 = Product("Headphones", 199.99, "Noise-cancelling headphones")
 
-# Create a cart and add products to it
-"""
-Initializes a Cart object and adds products to it with specified quantities.
+    # Create a cart and add products to it
+    """
+    Initializes a Cart object and adds products to it with specified quantities.
 
-Args:
-    cart: An instance of Cart to which products are added.
-    product1: The product representing a laptop is added with quantity 1.
-    product2: The product representing a smartphone is added with quantity 2.
-    product3: The product representing headphones is added with quantity 3.
+    Args:
+        cart: An instance of Cart to which products are added.
+        product1: The product representing a laptop is added with quantity 1.
+        product2: The product representing a smartphone is added with quantity 2.
+        product3: The product representing headphones is added with quantity 3.
 
-Returns:
-    None
-"""
-cart = Cart()
-cart.add_product(product1, 1)
-cart.add_product(product2, 2)
-cart.add_product(product3, 3)
+    Returns:
+        None
+    """
+    cart = Cart()
+    cart.add_product(product1, 1)
+    cart.add_product(product2, 2)
+    cart.add_product(product3, 3)
 
-# Display cart contents before applying any discounts
-"""
-Prints the contents of the cart and the total cost before any discounts are applied.
+    # Display cart contents before applying any discounts
+    """
+    Prints the contents of the cart and the total cost before any discounts are applied.
 
-Args:
-    cart: The Cart instance whose contents are displayed.
+    Args:
+        cart: The Cart instance whose contents are displayed.
 
-Returns:
-    None
-"""
-print("Before applying discount:")
-print(cart)
+    Returns:
+        None
+    """
+    print("Before applying discount:")
+    print(cart)
 
-# Apply discount based on user choice
-"""
-Prompts the user to choose a discount type (percentage or fixed) and applies it to the cart.
+    # Apply discount based on user choice
+    """
+    Prompts the user to choose a discount type (percentage or fixed) and applies it to the cart.
 
-Args:
-    discount_choice: A string input from the user indicating the discount type.
-    percentage: A float representing the percentage discount, if chosen.
-    amount: A float representing the fixed amount discount, if chosen.
-    discount: An instance of Discount (either PercentageDiscount or FixedAmountDiscount).
+    Args:
+        discount_choice: A string input from the user indicating the discount type.
+        percentage: A float representing the percentage discount, if chosen.
+        amount: A float representing the fixed amount discount, if chosen.
+        discount: An instance of Discount (either PercentageDiscount or FixedAmountDiscount).
 
-Returns:
-    None
-"""
-discount_choice = input("Choose discount type (percentage/fixed): ").strip().lower()
+    Returns:
+        None
+    """
+    discount_choice = input("Choose discount type (percentage/fixed): ").strip().lower()
 
-if discount_choice in ["percentage", "fixed"]:
-    if discount_choice == "percentage":
-        percentage = float(input("Enter discount percentage: "))
-        if percentage > 100:
-            print("Discount percentage cannot exceed 100%. No discount applied.")
+    if discount_choice in ["percentage", "fixed"]:
+        if discount_choice == "percentage":
+            percentage = float(input("Enter discount percentage: "))
+            if percentage > 100:
+                print("Discount percentage cannot exceed 100%. No discount applied.")
+                discount = None
+            else:
+                discount = PercentageDiscount(percentage)
+        elif discount_choice == "fixed":
+            amount = float(input("Enter discount amount: "))
+            discount = FixedAmountDiscount(amount)
+    else:
+        try:
+            # Try to interpret the input as a percentage
+            percentage = float(discount_choice)
+            if percentage > 100:
+                print("Discount percentage cannot exceed 100%. No discount applied.")
+                discount = None
+            else:
+                discount = PercentageDiscount(percentage)
+        except ValueError:
             discount = None
-        else:
-            discount = PercentageDiscount(percentage)
-    elif discount_choice == "fixed":
-        amount = float(input("Enter discount amount: "))
-        discount = FixedAmountDiscount(amount)
-else:
-    try:
-        # Try to interpret the input as a percentage
-        percentage = float(discount_choice)
-        if percentage > 100:
-            print("Discount percentage cannot exceed 100%. No discount applied.")
-            discount = None
-        else:
-            discount = PercentageDiscount(percentage)
-    except ValueError:
-        discount = None
-        print("No discount applied.")
+            print("No discount applied.")
 
-if discount:
-    cart.apply_discount(discount)
+    if discount:
+        cart.apply_discount(discount)
 
+    # Display cart contents after applying the discount
+    """
+    Prints the contents of the cart and the total cost after the discount has been applied.
 
-# Display cart contents after applying the discount
-"""
-Prints the contents of the cart and the total cost after the discount has been applied.
+    Args:
+        cart: The Cart instance whose contents are displayed after the discount.
 
-Args:
-    cart: The Cart instance whose contents are displayed after the discount.
+    Returns:
+        None
+    """
+    print("After applying discount:")
+    print(cart)
 
-Returns:
-    None
-"""
-print("After applying discount:")
-print(cart)
+    # Payment process
+    """
+    Prompts the user to choose a payment method and processes the payment.
 
-# Payment process
-"""
-Prompts the user to choose a payment method and processes the payment.
+    Args:
+        choice: A string input from the user indicating the chosen payment method.
+        processor: An instance of PaymentProcessor (either CreditCardProcessor, PayPalProcessor, or BankTransferProcessor).
 
-Args:
-    choice: A string input from the user indicating the chosen payment method.
-    processor: An instance of PaymentProcessor (either CreditCardProcessor, PayPalProcessor, or BankTransferProcessor).
+    Returns:
+        None
+    """
+    print("Choose payment method:")
+    print("1. Credit Card")
+    print("2. PayPal")
+    print("3. Bank Transfer")
 
-Returns:
-    None
-"""
-print("Choose payment method:")
-print("1. Credit Card")
-print("2. PayPal")
-print("3. Bank Transfer")
+    choice = input("Enter the number or name of the payment method: ").strip().lower()
 
-choice = input("Enter the number or name of the payment method: ").strip().lower()
+    if choice in ['1', 'credit card']:
+        card_number = input("Enter card number: ").strip()
+        card_holder = input("Enter card holder name: ").strip()
+        expiration_date = input("Enter expiration date (MM/YY): ").strip()
+        cvv = input("Enter CVV: ").strip()
+        processor = CreditCardProcessor(card_number, card_holder, expiration_date, cvv)
+    elif choice in ['2', 'paypal']:
+        email = input("Enter PayPal email: ").strip()
+        processor = PayPalProcessor(email)
+    elif choice in ['3', 'bank transfer']:
+        bank_account = input("Enter bank account number: ").strip()
+        bank_name = input("Enter bank name: ").strip()
+        processor = BankTransferProcessor(bank_account, bank_name)
+    else:
+        print("Invalid payment method selected.")
+        processor = None
 
-if choice in ['1', 'credit card']:
-    card_number = input("Enter card number: ").strip()
-    card_holder = input("Enter card holder name: ").strip()
-    expiration_date = input("Enter expiration date (MM/YY): ").strip()
-    cvv = input("Enter CVV: ").strip()
-    processor = CreditCardProcessor(card_number, card_holder, expiration_date, cvv)
-elif choice in ['2', 'paypal']:
-    email = input("Enter PayPal email: ").strip()
-    processor = PayPalProcessor(email)
-elif choice in ['3', 'bank transfer']:
-    bank_account = input("Enter bank account number: ").strip()
-    bank_name = input("Enter bank name: ").strip()
-    processor = BankTransferProcessor(bank_account, bank_name)
-else:
-    print("Invalid payment method selected.")
-    processor = None
+    # Execute payment if a valid processor was selected
+    """
+    Executes the payment using the selected payment processor.
 
-# Execute payment if a valid processor was selected
-"""
-Executes the payment using the selected payment processor.
+    Args:
+        processor: The PaymentProcessor instance used to process the payment.
 
-Args:
-    processor: The PaymentProcessor instance used to process the payment.
+    Returns:
+        None
+    """
+    if processor:
+        cart.pay(processor)
 
-Returns:
-    None
-"""
-if processor:
-    cart.pay(processor)
-
+except (InvalidPriceError, InvalidQuantityError) as e:
+    print(e)
