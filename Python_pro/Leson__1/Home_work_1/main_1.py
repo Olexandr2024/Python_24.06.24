@@ -1,3 +1,23 @@
+class LoggingMixin:
+    """
+    Mixin class to provide logging functionality for actions in Product and Cart classes.
+    """
+
+    def log(self, message):
+        """
+        Logs a message to the console or a file.
+
+        Args:
+            message: A string message describing the action to log.
+        """
+        # Логирование в консоль
+        print(f"LOG: {message}")
+
+        # Если нужно логировать в файл, можно использовать следующий код:
+        # with open("log.txt", "a") as log_file:
+        #     log_file.write(f"{message}\n")
+
+
 class InvalidPriceError(Exception):
     """
     Custom exception raised when an invalid price (negative or zero) is set for a product.
@@ -26,7 +46,7 @@ class InvalidQuantityError(Exception):
         super().__init__(f"Invalid quantity: {quantity}. Quantity must be greater than 0.")
 
 
-class Product:
+class Product(LoggingMixin):
     """
     Represents a product in the store.
 
@@ -53,6 +73,7 @@ class Product:
         self.name = name
         self.price = price
         self.description = description
+        self.log(f"Created product: {self.name}, Price: {self.price:.2f}")
 
     def __str__(self):
         """
@@ -62,6 +83,21 @@ class Product:
             A string that describes the product.
         """
         return f"Product(name='{self.name}', price={self.price:.2f}, description='{self.description}')"
+
+    def update_price(self, new_price):
+        """
+        Updates the price of the product.
+
+        Args:
+            new_price: The new price to set.
+
+        Raises:
+            InvalidPriceError: If the new price is negative or zero.
+        """
+        if new_price <= 0:
+            raise InvalidPriceError(new_price)
+        self.log(f"Price for {self.name} updated from {self.price:.2f} to {new_price:.2f}")
+        self.price = new_price
 
 
 class Discount:
@@ -169,7 +205,7 @@ class DiscountMixin:
             self.items[i] = (Product(product.name, discounted_price, product.description), quantity)
 
 
-class Cart(DiscountMixin):
+class Cart(DiscountMixin, LoggingMixin):
     """
     Represents a shopping cart that holds products and handles payments.
 
@@ -180,6 +216,7 @@ class Cart(DiscountMixin):
     def __init__(self):
         """Initializes an empty shopping cart."""
         self.items = []
+        self.log("Initialized an empty shopping cart.")
 
     def add_product(self, product, quantity):
         """
@@ -195,6 +232,7 @@ class Cart(DiscountMixin):
         if quantity <= 0:
             raise InvalidQuantityError(quantity)
         self.items.append((product, quantity))
+        self.log(f"Added product: {product.name}, Quantity: {quantity} to the cart.")
 
     def total_cost(self):
         """
@@ -203,7 +241,9 @@ class Cart(DiscountMixin):
         Returns:
             The total cost as a float.
         """
-        return sum(product.price * quantity for product, quantity in self.items)
+        total = sum(product.price * quantity for product, quantity in self.items)
+        self.log(f"Total cost calculated: {total:.2f}")
+        return total
 
     def pay(self, payment_processor):
         """
@@ -214,6 +254,7 @@ class Cart(DiscountMixin):
         """
         total = self.total_cost()
         payment_processor.pay(total)
+        self.log(f"Payment of ${total:.2f} processed using {payment_processor.__class__.__name__}.")
 
     def __str__(self):
         """
