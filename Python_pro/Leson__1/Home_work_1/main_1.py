@@ -1,3 +1,6 @@
+import re
+from datetime import datetime
+
 class LoggingMixin:
     """
     Mixin class to provide logging functionality for actions in Product and Cart classes.
@@ -44,6 +47,12 @@ class InvalidQuantityError(Exception):
             quantity: The invalid quantity that triggered the exception.
         """
         super().__init__(f"Invalid quantity: {quantity}. Quantity must be greater than 0.")
+
+
+class InvalidCardDetailsError(Exception):
+    """Custom exception for invalid card details."""
+    def __init__(self, message):
+        super().__init__(f"Invalid card details: {message}")
 
 
 class Product(LoggingMixin):
@@ -124,7 +133,7 @@ class Discount:
         raise NotImplementedError("This method should be overridden by subclasses")
 
 
-class PercentageDiscount(Discount):
+class PercentageDiscount(Discount, LoggingMixin):
     """
     Represents a percentage-based discount.
 
@@ -152,10 +161,12 @@ class PercentageDiscount(Discount):
             The price after the percentage discount is applied.
         """
         discount_amount = price * (self.percentage / 100)
-        return price - discount_amount
+        new_price = price - discount_amount
+        self.log(f"Applied {self.percentage}% discount: Old Price: {price:.2f}, New Price: {new_price:.2f}")
+        return new_price
 
 
-class FixedAmountDiscount(Discount):
+class FixedAmountDiscount(Discount, LoggingMixin):
     """
     Represents a fixed amount discount.
 
@@ -182,7 +193,9 @@ class FixedAmountDiscount(Discount):
         Returns:
             The price after the fixed amount discount is applied.
         """
-        return max(0, price - self.amount)
+        new_price = max(0, price - self.amount)
+        self.log(f"Applied fixed discount: {self.amount:.2f}, Old Price: {price:.2f}, New Price: {new_price:.2f}")
+        return new_price
 
 
 class DiscountMixin:
@@ -203,6 +216,7 @@ class DiscountMixin:
         for i, (product, quantity) in enumerate(self.items):
             discounted_price = discount.apply(product.price)
             self.items[i] = (Product(product.name, discounted_price, product.description), quantity)
+        self.log(f"Discount applied to all products in the cart using {discount.__class__.__name__}.")
 
 
 class Cart(DiscountMixin, LoggingMixin):
@@ -288,7 +302,7 @@ class PaymentProcessor:
         raise NotImplementedError("This method should be overridden by subclasses")
 
 
-class CreditCardProcessor(PaymentProcessor):
+class CreditCardProcessor(PaymentProcessor, LoggingMixin):
     """
     Processes payments using a credit card.
 
@@ -308,11 +322,47 @@ class CreditCardProcessor(PaymentProcessor):
             card_holder: The name of the card holder.
             expiration_date: The expiration date of the card.
             cvv: The CVV code of the card.
+
+        Raises:
+            InvalidCardDetailsError: If any card details are invalid.
         """
+        self.validate_card_details(card_number, card_holder, expiration_date, cvv)
         self.card_number = card_number
         self.card_holder = card_holder
         self.expiration_date = expiration_date
         self.cvv = cvv
+
+    def validate_card_details(self, card_number, card_holder, expiration_date, cvv):
+        """
+        Validates the credit card details.
+
+        Args:
+            card_number: The credit card number.
+            card_holder: The name of the card holder.
+            expiration_date: The expiration date of the card.
+            cvv: The CVV code of the card.
+
+        Raises:
+            InvalidCardDetailsError: If any of the card details are invalid.
+        """
+        if not re.fullmatch(r"\d{16}", card_number):
+            raise InvalidCardDetailsError("Card number must be 16 digits.")
+
+        if not re.fullmatch(r"[A-Za-z\s]+", card_holder):
+            raise InvalidCardDetailsError("Card holder name must contain only letters and spaces.")
+
+        if not re.fullmatch(r"(0[1-9]|1[0-2])/\d{2}", expiration_date):
+            raise InvalidCardDetailsError("Expiration date must be in MM/YY format.")
+
+        # Check if the card is expired
+        current_year = int(datetime.now().strftime("%y"))
+        current_month = int(datetime.now().strftime("%m"))
+        exp_month, exp_year = map(int, expiration_date.split("/"))
+        if exp_year < current_year or (exp_year == current_year and exp_month < current_month):
+            raise InvalidCardDetailsError("The credit card is expired.")
+
+        if not re.fullmatch(r"\d{3,4}", cvv):
+            raise InvalidCardDetailsError("CVV must be 3 or 4 digits.")
 
     def pay(self, amount):
         """
@@ -328,10 +378,11 @@ class CreditCardProcessor(PaymentProcessor):
         print(f"Card Holder: {self.card_holder}")
         print(f"Card Number: {self.card_number}")
         print(f"Expiration Date: {self.expiration_date}")
+        self.log(f"Processed payment of ${amount:.2f} using Credit Card ending in {self.card_number[-4:]}.")
         print("Payment successful!\n")
 
 
-class PayPalProcessor(PaymentProcessor):
+class PayPalProcessor(PaymentProcessor, LoggingMixin):
     """
     Processes payments using PayPal.
 
@@ -360,10 +411,11 @@ class PayPalProcessor(PaymentProcessor):
         """
         print(f"Processing PayPal payment of ${amount:.2f}")
         print(f"PayPal Account: {self.email}")
+        self.log(f"Processed payment of ${amount:.2f} using PayPal account {self.email}.")
         print("Payment successful!\n")
 
 
-class BankTransferProcessor(PaymentProcessor):
+class BankTransferProcessor(PaymentProcessor, LoggingMixin):
     """
     Processes payments using a bank transfer.
 
@@ -396,20 +448,22 @@ class BankTransferProcessor(PaymentProcessor):
         print(f"Processing bank transfer of ${amount:.2f}")
         print(f"Bank Name: {self.bank_name}")
         print(f"Bank Account: {self.bank_account}")
+        self.log(f"Processed payment of ${amount:.2f} using bank transfer to account {self.bank_account}.")
         print("Payment successful!\n")
 
 
 # Example usage
 
 try:
-    # Create several products
+    # Create several products with valid and invalid prices
     """
-    Creates instances of the Product class for each item.
+    Creates instances of the Product class for each item, testing both valid and invalid prices.
 
     Args:
-        product1: An instance of Product representing a laptop.
-        product2: An instance of Product representing a smartphone.
-        product3: An instance of Product representing headphones.
+        product1: An instance of Product representing a valid laptop product.
+        product2: An instance of Product representing a valid smartphone product.
+        product3: An instance of Product representing a valid headphones product.
+        product_invalid: An instance of Product with an invalid price (should raise InvalidPriceError).
 
     Returns:
         None
@@ -418,15 +472,23 @@ try:
     product2 = Product("Smartphone", 699.99, "A latest model smartphone")
     product3 = Product("Headphones", 199.99, "Noise-cancelling headphones")
 
-    # Create a cart and add products to it
+    # Example of invalid product creation (should raise an exception)
+    try:
+        product_invalid = Product("Invalid Product", -50, "This should fail")
+    except InvalidPriceError as e:
+        print(e)
+
+    # Create a cart and add products to it, including testing invalid quantities
     """
-    Initializes a Cart object and adds products to it with specified quantities.
+    Initializes a Cart object and adds products to it with specified quantities,
+    including a test for invalid quantity (should raise InvalidQuantityError).
 
     Args:
         cart: An instance of Cart to which products are added.
         product1: The product representing a laptop is added with quantity 1.
         product2: The product representing a smartphone is added with quantity 2.
         product3: The product representing headphones is added with quantity 3.
+        invalid_quantity_test: Attempts to add a product with an invalid quantity (should raise InvalidQuantityError).
 
     Returns:
         None
@@ -435,6 +497,12 @@ try:
     cart.add_product(product1, 1)
     cart.add_product(product2, 2)
     cart.add_product(product3, 3)
+
+    # Example of invalid quantity addition (should raise an exception)
+    try:
+        cart.add_product(product1, -1)
+    except InvalidQuantityError as e:
+        print(e)
 
     # Display cart contents before applying any discounts
     """
@@ -552,5 +620,5 @@ try:
     if processor:
         cart.pay(processor)
 
-except (InvalidPriceError, InvalidQuantityError) as e:
+except (InvalidPriceError, InvalidQuantityError, InvalidCardDetailsError) as e:
     print(e)
