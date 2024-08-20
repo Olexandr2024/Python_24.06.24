@@ -238,6 +238,53 @@ class Cart(DiscountMixin, LoggingMixin):
         cart_contents = "\n".join([f"{quantity} x {product}" for product, quantity in self.items])
         return f"Cart:\n{cart_contents}\nTotal cost: {self.total_cost():.2f}"
 
+    def __len__(self):
+        """
+        Returns the number of items in the cart.
+
+        Returns:
+            int: The number of items in the cart.
+        """
+        return len(self.items)
+
+    def __getitem__(self, index):
+        """
+        Allows access to items in the cart by index.
+
+        Args:
+            index (int): The index of the item to access.
+
+        Returns:
+            tuple: A tuple containing the product and quantity at the specified index.
+        """
+        return self.items[index]
+
+    def __iter__(self):
+        """
+        Returns an iterator for the cart items.
+
+        Returns:
+            iterator: An iterator for the cart items.
+        """
+        return iter(self.items)
+
+    def __iadd__(self, other):
+        """
+        Combines another cart with this cart using the += operator.
+
+        Args:
+            other (Cart): Another cart whose items will be added to this cart.
+
+        Returns:
+            Cart: The combined cart.
+        """
+        if isinstance(other, Cart):
+            self.items.extend(other.items)
+            self.log(f"Combined cart with another cart containing {len(other)} items.")
+        else:
+            raise TypeError(f"Cannot combine Cart with {type(other).__name__}")
+        return self
+
 
 class PaymentProcessor:
     """Base class for payment processing."""
