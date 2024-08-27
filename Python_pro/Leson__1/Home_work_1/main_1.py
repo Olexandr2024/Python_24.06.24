@@ -278,11 +278,10 @@ class Cart(DiscountMixin, LoggingMixin):
         Returns:
             Cart: The combined cart.
         """
-        if isinstance(other, Cart):
-            self.items.extend(other.items)
-            self.log(f"Combined cart with another cart containing {len(other)} items.")
-        else:
+        if not isinstance(other, Cart):
             raise TypeError(f"Cannot combine Cart with {type(other).__name__}")
+        self.items.extend(other.items)
+        self.log(f"Combined cart with another cart containing {len(other)} items.")
         return self
 
 
