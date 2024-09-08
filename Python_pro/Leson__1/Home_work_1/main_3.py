@@ -478,3 +478,215 @@ print(fibonacci(10))  # Calculated
 print(fibonacci(10))  # Cached
 
 
+# lesson 9
+
+# Task 1
+class BalanceDescriptor:
+    """
+    Descriptor to control access to the balance attribute.
+    """
+
+    def __get__(self, instance, owner):
+        return instance._balance
+
+    def __set__(self, instance, value):
+        raise AttributeError("Cannot directly modify balance.")
+
+
+class Account:
+    """
+    A class representing a bank account with a controlled balance.
+
+    :param initial_balance: Initial amount for the account
+    """
+    balance = BalanceDescriptor()  # Using descriptor for balance
+
+    def __init__(self, initial_balance):
+        self._balance = initial_balance  # Private variable to store balance
+
+    @property
+    def balance(self):
+        """
+        Property to return the account balance.
+
+        :return: Current balance of the account
+        """
+        return self._balance
+
+    def __setattr__(self, name, value):
+        """
+        Method to restrict direct modification of attributes.
+
+        :param name: Attribute name
+        :param value: Value to be assigned to the attribute
+        """
+        if name == "_balance":
+            super().__setattr__(name, value)  # Allow modification of private _balance
+        else:
+            raise AttributeError(f"Cannot modify {name} directly.")
+
+    def __getattr__(self, name):
+        """
+        Method triggered when accessing a non-existent attribute.
+
+        :param name: Attribute name
+        :return: Error message for non-existent attribute
+        """
+        return f"Property {name} does not exist."
+
+
+# Usage of the class
+account = Account(1000)
+
+# Attempt to change balance directly
+try:
+    account.balance = 500
+except AttributeError as e:
+    print(e)
+
+# Get the current balance
+print(account.balance)
+
+# Access non-existent property
+print(account.non_existent_property)
+
+
+# Task 2
+
+class User:
+    def __init__(self, first_name, last_name):
+        """
+        Initialize first_name and last_name using custom attribute setting.
+
+        :param first_name: First name of the user
+        :param last_name: Last name of the user
+        """
+        self.__dict__['_first_name'] = first_name
+        self.__dict__['_last_name'] = last_name
+
+    @property
+    def first_name(self):
+        """
+        Getter for first_name.
+
+        :return: First name of the user
+        """
+        return self._first_name
+
+    @property
+    def last_name(self):
+        """
+        Getter for last_name.
+
+        :return: Last name of the user
+        """
+        return self._last_name
+
+    def __setattr__(self, name, value):
+        """
+        Prevent direct modification of first_name and last_name.
+
+        :param name: Attribute name
+        :param value: Attribute value to set
+        """
+        if name in ['first_name', 'last_name']:
+            raise AttributeError(f"Cannot modify {name} directly.")
+        super().__setattr__(name, value)
+
+    def __getattr__(self, name):
+        """
+        Method triggered when accessing a non-existent attribute.
+
+        :param name: Attribute name
+        :return: Error message for non-existent attribute
+        """
+        return f"Attribute {name} does not exist."
+
+
+# Create a User object
+user = User("John", "Doe")
+
+# Attempt to change the first_name (should raise an AttributeError)
+try:
+    user.first_name = "Jane"
+except AttributeError as e:
+    print(e)
+
+# Access a non-existing property (should print a custom message)
+print(user.middle_name)
+
+
+# Task 3
+
+class Rectangle:
+    def __init__(self, width, height):
+        """
+        Initialize width and height using custom attribute setting.
+
+        :param width: Width of the rectangle
+        :param height: Height of the rectangle
+        """
+        self.__dict__['_width'] = width
+        self.__dict__['_height'] = height
+
+    @property
+    def width(self):
+        """
+        Getter for width.
+
+        :return: Width of the rectangle
+        """
+        return self._width
+
+    @property
+    def height(self):
+        """
+        Getter for height.
+
+        :return: Height of the rectangle
+        """
+        return self._height
+
+    def __setattr__(self, name, value):
+        """
+        Prevent direct modification of width and height.
+
+        :param name: Attribute name
+        :param value: Attribute value to set
+        """
+        if name in ['width', 'height']:
+            raise AttributeError(f"Cannot modify {name} directly.")
+        super().__setattr__(name, value)
+
+    def __getattr__(self, name):
+        """
+        Method triggered when accessing a non-existent attribute.
+
+        :param name: Attribute name
+        :return: Error message for non-existent attribute
+        """
+        return f"Attribute {name} does not exist."
+
+    def area(self):
+        """
+        Calculate the area of the rectangle.
+
+        :return: Area of the rectangle
+        """
+        return self.width * self.height
+
+
+# Create a Rectangle object
+rect = Rectangle(5, 10)
+
+# Attempt to change the width (should raise an AttributeError)
+try:
+    rect.width = 7
+except AttributeError as e:
+    print(e)
+
+# Access a non-existing property (should print a custom message)
+print(rect.color)
+
+# Calculate the area of the rectangle
+print("Area of the rectangle:", rect.area())
