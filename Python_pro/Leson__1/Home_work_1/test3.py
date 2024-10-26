@@ -83,7 +83,7 @@ x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1], 1))
 x_test = np.reshape(x_test, (x_test.shape[0], x_test.shape[1], 1))
 
 # Параметри LSTM моделі
-num_neurons = 1000
+num_neurons = 100
 num_layers = 2
 dropout_rate = 0.2
 
@@ -229,16 +229,16 @@ predictions_df = pd.DataFrame({
 
 
 # Прогноз на 7 днів вперед
-def predict_next_days(model, last_data, days=7):
+def predict_next_hours(model, last_data, hours=24):
     predictions = []
-    current_data = last_data[-60:]  # Використовуємо останні 60 днів для прогнозу
+    current_data = last_data[-60:]  # Використовуємо останні 60 значень для прогнозу
+    current_data = current_data.reshape((1, current_data.shape[0], 1))
 
-    for _ in range(days):
-        current_data = current_data.reshape((1, current_data.shape[0], 1))
+    for _ in range(hours):
         predicted = model.predict(current_data)
         predictions.append(predicted[0, 0])
         # Додаємо новий прогноз до поточних даних
-        current_data = np.append(current_data[0, 1:, :], predicted).reshape(1, -1, 1)
+        current_data = np.append(current_data[:, 1:, :], predicted.reshape(1, 1, 1), axis=1)  # Оновлюємо поточні дані
 
     return scaler.inverse_transform(np.array(predictions).reshape(-1, 1))
 
@@ -247,39 +247,17 @@ def predict_next_days(model, last_data, days=7):
 last_data = scaled_data[-60:]
 
 
-# Прогноз на 7 днів вперед
-def predict_next_days(model, last_data, days=7):
-    predictions = []
-    current_data = last_data[-60:]  # Використовуємо останні 60 днів для прогнозу
-    current_data = current_data.reshape((1, current_data.shape[0], 1))  # Змінюємо форму масиву тут
-
-    for _ in range(days):
-        predicted = model.predict(current_data)
-        predictions.append(predicted[0, 0])
-        # Додаємо новий прогноз до поточних даних
-        current_data = np.append(current_data[:, 1:, :], predicted.reshape(1, 1, 1),
-                                 axis=1)  # Змінюємо форму і напрямок додавання
-
-    return scaler.inverse_transform(np.array(predictions).reshape(-1, 1))
-
-
-# Отримуємо останні дані для прогнозу
-last_data = scaled_data[-60:]
 
 # Прогнозуємо ціни на 7 днів вперед
-predicted_next_days = predict_next_days(model, last_data, days=7)
+predicted_next_hours = predict_next_hours(model, last_data, hours=24)
 
 # Виводимо прогнози
-predicted_dates = [(datetime.now() + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(1, 8)]
-predictions_output = pd.DataFrame({'Date': predicted_dates, 'Predicted Price': predicted_next_days.flatten()})
+predicted_times = [(datetime.now() + timedelta(hours=i)).strftime('%Y-%m-%d %H:%M') for i in range(1, 25)]
+hourly_predictions_output = pd.DataFrame({'Time': predicted_times, 'Predicted Price': predicted_next_hours.flatten()})
 
-print("Прогнози на 7 днів вперед:")
-print(predictions_output)
+print("Прогнози на 24 години вперед:")
+print(hourly_predictions_output)
 
-# Збереження прогнозів на 7 днів в CSV файл
-predictions_output.to_csv('predictions_7_days.csv', index=False)
-print("Прогнози на 7 днів збережені в 'predictions_7_days.csv'.")
-
-
-
-
+# Збереження прогнозів на 24 години в CSV файл
+hourly_predictions_output.to_csv('predictions_24_hours.csv', index=False)
+print("Прогнози на 24 години збережені в 'predictions_24_hours.csv'.")
